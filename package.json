@@ -29,6 +29,11 @@
       "code": "ocr_translate",
       "explain": "截图翻译",
       "cmds": ["截图翻译", "pot截图翻译"]
+    },
+    {
+      "code": "image_ocr",
+      "explain": "图片 OCR",
+      "cmds": ["图片OCR", "pot图片OCR"]
     }
   ]
 }
