@@ -1,0 +1,34 @@
+{
+  "name": "rubick-pot-plugin",
+  "pluginName": "Pot 翻译",
+  "description": "调用 Pot 翻译软件的外部 API 进行翻译",
+  "author": "user",
+  "main": "index.html",
+  "logo": "https://pot-app.com/favicon.ico",
+  "version": "1.0.0",
+  "preload": "preload.js",
+  "homePage": "https://github.com/pot-app/pot-desktop",
+  "pluginType": "ui",
+  "features": [
+    {
+      "code": "translate",
+      "explain": "翻译指定文本",
+      "cmds": ["翻译", "pot", "translate"]
+    },
+    {
+      "code": "selection_translate",
+      "explain": "划词翻译",
+      "cmds": ["划词翻译", "pot划词"]
+    },
+    {
+      "code": "ocr_recognize",
+      "explain": "截图 OCR",
+      "cmds": ["OCR", "截图OCR", "potOCR"]
+    },
+    {
+      "code": "ocr_translate",
+      "explain": "截图翻译",
+      "cmds": ["截图翻译", "pot截图翻译"]
+    }
+  ]
+}
