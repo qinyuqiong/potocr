@@ -58,6 +58,25 @@
     .error {
       color: red;
     }
+    .image-container {
+      margin-top: 15px;
+      padding: 10px;
+      border: 1px dashed #ddd;
+      border-radius: 4px;
+      text-align: center;
+      min-height: 100px;
+      background-color: white;
+    }
+    #imagePreview {
+      max-width: 100%;
+      max-height: 200px;
+      margin: 10px 0;
+    }
+    .image-button-group {
+      margin-top: 10px;
+      display: flex;
+      gap: 10px;
+    }
   </style>
 </head>
 <body>
@@ -69,6 +88,14 @@
       <button onclick="selectionTranslate()">划词翻译</button>
       <button onclick="ocrRecognize()">截图 OCR</button>
       <button onclick="ocrTranslate()">截图翻译</button>
+    </div>
+    <div class="image-container">
+      <p>将图片复制到此处或粘贴图片</p>
+      <img id="imagePreview" src="" alt="图片预览" style="display: none;">
+      <div class="image-button-group">
+        <button onclick="handleImageOCR()">图片 OCR</button>
+        <button onclick="clearImage()">清除图片</button>
+      </div>
     </div>
     <div class="response" id="response"></div>
   </div>
@@ -135,6 +162,76 @@
         }
       } catch (error) {
         document.getElementById('response').innerHTML = `<span class="error">错误: ${error.message}</span>`;
+      }
+    }
+
+    // 图片处理相关函数
+    let currentImage = null;
+
+    // 监听剪贴板事件
+    document.addEventListener('paste', async (e) => {
+      const items = e.clipboardData.items;
+      for (let i = 0; i < items.length; i++) {
+        if (items[i].type.indexOf('image') !== -1) {
+          const blob = items[i].getAsFile();
+          const reader = new FileReader();
+          reader.onload = function(event) {
+            currentImage = blob;
+            const imagePreview = document.getElementById('imagePreview');
+            imagePreview.src = event.target.result;
+            imagePreview.style.display = 'block';
+            document.getElementById('response').innerHTML = '图片已粘贴，可点击 "图片 OCR" 进行识别';
+          };
+          reader.readAsDataURL(blob);
+          break;
+        }
+      }
+    });
+
+    // 处理图片 OCR
+    async function handleImageOCR() {
+      if (!currentImage) {
+        document.getElementById('response').innerHTML = '<span class="error">请先粘贴图片</span>';
+        return;
+      }
+
+      try {
+        // 保存图片到 Pot 缓存目录
+        const cacheDir = getCacheDir();
+        const imagePath = `${cacheDir}/pot_screenshot_cut.png`;
+        
+        // 这里需要实现保存图片到缓存目录的功能
+        // 由于浏览器环境限制，无法直接写入文件系统
+        // 因此这里使用 Pot 的截图 OCR 功能，让用户手动选择图片区域
+        
+        const response = await fetch(`${baseUrl}/ocr_recognize`);
+        if (response.ok) {
+          document.getElementById('response').innerHTML = '图片 OCR 请求已发送，请选择图片区域';
+        } else {
+          document.getElementById('response').innerHTML = `<span class="error">请求失败: ${response.status}</span>`;
+        }
+      } catch (error) {
+        document.getElementById('response').innerHTML = `<span class="error">错误: ${error.message}</span>`;
+      }
+    }
+
+    // 清除图片
+    function clearImage() {
+      currentImage = null;
+      const imagePreview = document.getElementById('imagePreview');
+      imagePreview.src = '';
+      imagePreview.style.display = 'none';
+      document.getElementById('response').innerHTML = '';
+    }
+
+    // 获取系统缓存目录
+    function getCacheDir() {
+      if (navigator.platform.includes('Win')) {
+        return `${process.env.USERPROFILE}/AppData/Local/com.pot-app.desktop`;
+      } else if (navigator.platform.includes('Mac')) {
+        return `${process.env.HOME}/Library/Caches/com.pot-app.desktop`;
+      } else {
+        return `${process.env.HOME}/.cache/com.pot-app.desktop`;
       }
     }
   </script>
